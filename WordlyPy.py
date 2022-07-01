@@ -9,6 +9,7 @@ class WordlyPy:
     indexChars = {
 
     }
+    removedWords = []
     
     attempts = 0
 
@@ -24,6 +25,16 @@ class WordlyPy:
         for clean in self.bannedChars:
             if(clean in self.containChars):
                 self.bannedChars.remove(clean)
+
+    ''' Deals with situations where we have duplicate letters, ie
+        MOLLY where the first l is grey, and the second is green. Since after the first l it'll be
+        removed from our corpus, we check in our removed words if there are l > 1 chars in the word we return it to
+        our corpus.
+    
+    '''
+    def selfCleanDup(self, letter):
+        for word in self.removedWords:
+            if(word.count(letter) > 1):self.guessWords.append(word)
     def returnSize(self):
         return len(self.guessWords)
         
@@ -47,6 +58,8 @@ class WordlyPy:
         for word in self.guessWords:
             if(word.find(banned) == -1):
                 newGuesses.append(word)
+            else:
+                self.removedWords.append(word)
         self.bannedChars.append(banned)
         self.guessWords = newGuesses
         self.selfClean()
@@ -59,7 +72,9 @@ class WordlyPy:
 
     def filterContainChar(self, contain):
         newGuesses = []
+        if(contain in self.bannedChars):self.selfCleanDup(contain)
         if(contain in self.containChars):return
+        
         for word in self.guessWords:
             if(word.find(contain) != -1):
                 newGuesses.append(word)
@@ -74,6 +89,7 @@ class WordlyPy:
     """
     def filterIndexChar(self, letter,index):
         newGuesses = []
+        if(index in self.bannedChars):self.selfCleanDup(index)
         for word in self.guessWords:
             if(len(word) > index and word[index] == letter):
                 newGuesses.append(word)

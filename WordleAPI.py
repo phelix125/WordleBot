@@ -30,33 +30,12 @@ def checkWords(driver,wp,row):
         
         letter = letterElement.text[0]
         letter = letter.lower()
-        print(letter)
-        print(letterElement.get_attribute('innerHTML'))
         if(letterElement.get_attribute('innerHTML').find("absent") != -1):
             wp.filterBannedChar(letter)
         elif(letterElement.get_attribute('innerHTML').find("present")!= -1):
             wp.filterContainChar(letter)
         elif(letterElement.get_attribute('innerHTML').find("correct") != -1):
             wp.filterIndexChar(letter,i-1)
-
-    '''
-    firstLetter = driver.find_element(By.XPATH, '//*[@id="__next"]/div/div[1]/div[1]/div[2]/div[1]/div[1]')
-    print("HELLO")
-    print(firstLetter.text)
-    print(firstLetter.get_attribute('innerHTML'))
-    secondLetter = driver.find_element(By.XPATH, '//*[@id="__next"]/div/div[1]/div[1]/div[2]/div[1]/div[2]')
-    print("HELLO")
-    print(secondLetter.text)
-    print(secondLetter.get_attribute('innerHTML'))
-    '''
-    #//*[@id="__next"]/div/div[1]/div[1]/div[2]/div[2]/div[1]
-    
-
-    #
-    #print("BLAH")
-    #print(firstLetter.text)
-    #
-    
 
 def main():
     with open("words.txt") as file:
@@ -66,7 +45,7 @@ def main():
     wp = WordlyPy(lines, 2)
     wp.cleanText()
     
-    site = "https://wordplay.com"
+    site = "https://wordplay.com/new"
     driver = webdriver.Safari()
     driver.get(site)
     actions = ActionChains(driver)
@@ -80,11 +59,12 @@ def main():
     
         sleep(5)
         checkWords(driver,wp,i)
-        wp.printGuessWords()
+        #wp.printGuessWords()
         actions.send_keys(Keys.ENTER)
         actions.perform()
         wp.printFilters()
-    sendWord(wp.popRandWord(),actions)
+
+    print("DONE")
     
 
     
