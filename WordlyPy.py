@@ -41,8 +41,9 @@ class WordlyPy:
         Output ---> guessWords = ["blah","test"]
     """
     def filterBannedChar(self, banned):
+        
         newGuesses = []
-        if(banned in self.bannedChars):return
+        if(banned in self.bannedChars or banned in self.containChars or banned in self.indexChars):return
         for word in self.guessWords:
             if(word.find(banned) == -1):
                 newGuesses.append(word)
