@@ -24,7 +24,7 @@ def sendWord(guess,actions):
     actions.perform()
 
 def checkWords(driver,wp,row):
-    
+    win = 0
     for i in range(1,6):
         letterElement = driver.find_element(By.XPATH, '//*[@id="__next"]/div/div[1]/div[1]/div[2]/div['+str(row)+']/div['+ str(i) +']')
         
@@ -33,9 +33,14 @@ def checkWords(driver,wp,row):
         if(letterElement.get_attribute('innerHTML').find("absent") != -1):
             wp.filterBannedChar(letter)
         elif(letterElement.get_attribute('innerHTML').find("present")!= -1):
-            wp.filterContainChar(letter)
+            wp.filterContainChar(letter,i-1)
         elif(letterElement.get_attribute('innerHTML').find("correct") != -1):
+            win += 1
             wp.filterIndexChar(letter,i-1)
+        
+    return win == 5
+            
+
 
 def main():
     with open("words.txt") as file:
@@ -53,23 +58,29 @@ def main():
     actions.move_by_offset(20,20).click().perform()
     #//*[@id="mainstart"]/div[2]/button[1]
     sleep(3)
+    wp.printFilters()
 
-    for i in range(1,6):
-        sendWord(wp.popRandWord(),actions)
+    for i in range(1,7):
+        word = wp.popRandWord()
+        # OPTIONAL wp.popSmartWord() -> NOTE: doesn't work quite as well.
+        print(word)
+        sendWord(word,actions)
     
         sleep(5)
-        checkWords(driver,wp,i)
+        if(checkWords(driver,wp,i)):
+            print("DONE: Word was ",word)
+            break
         #wp.printGuessWords()
         actions.send_keys(Keys.ENTER)
         actions.perform()
         wp.printFilters()
 
-    print("DONE")
+    
     
 
     
         
 
+if __name__ == "__main__":
 
-
-main()
+    main()
